@@ -1,0 +1,12 @@
+{
+    "params_example": "[room name (optional)]",
+    "command_description": "Generate an Jitsi video meeting URL.",
+    "customize_name": "Customize Name",
+    "customize_name_description": "Choose the username that this app will post as.",
+    "customize_icon": "Customize Icon",
+    "customize_icon_description": "Choose the icon that is used for messages from this app.",
+    "server": "Server",
+    "server_description": "Jitsi server from where the slash command will generate the URLs",
+    "room_name_prepend": "Prepend Room Name",
+    "room_name_prepend_description": "Prepend Room Names with this text"
+}
