@@ -1,0 +1,8 @@
+# docker-compose up `service-name` to build
+
+version: '2'
+
+services:
+  rocketchatapp_jitsi:
+    image: rocketchatapp_jitsi:latest
+    container_name: rocketchatapp_jitsi
