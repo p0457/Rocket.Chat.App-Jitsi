@@ -17,9 +17,12 @@ export class JitsiSlashCommand implements ISlashCommand {
 
     // tslint:disable-next-line:max-line-length
     public async executor(context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> {
+        const sendAsSelf = await read.getEnvironmentReader().getSettings().getValueById('send_as_self');
         const avatarUrl = await read.getEnvironmentReader().getSettings().getValueById('icon');
         const alias = await read.getEnvironmentReader().getSettings().getValueById('name');
-        const sender = await read.getUserReader().getById('rocket.cat');
+        const botSender = await read.getUserReader().getById('rocket.cat');
+        const selfSender = context.getSender();
+        const room = context.getRoom();
 
         let server = await read.getEnvironmentReader().getSettings().getValueById('server');
         if (!server.toString().endsWith('/')) {
@@ -41,20 +44,38 @@ export class JitsiSlashCommand implements ISlashCommand {
           }
         }
 
+        if (roomName.trim() === '' || roomName.trim() === roomNamePrepend)  {
+          roomName = `${roomName}-${room.slugifiedName}`;
+        }
+
         const url = `${server}${roomName}`;
 
-        const text = `*Join the video call: *${ url }`;
+        let text = `@${selfSender.username} *has started a video call:* ${url}`;
 
-        const room = context.getRoom();
+        if (sendAsSelf) {
+          text = `*Join my video call:* ${ url }`;
+        }
 
-        const message = modify.getCreator().startMessage({
+        let sender = botSender;
+        if (sendAsSelf) {
+          sender = selfSender;
+        }
+
+        let msgBuilder = {
           room,
           sender,
           groupable: false,
-          avatarUrl,
-          alias,
           text,
-        });
+          avatarUrl: undefined,
+          alias: undefined
+        };
+
+        if (!sendAsSelf) {
+          msgBuilder.avatarUrl = avatarUrl;
+          msgBuilder.alias = alias;
+        }
+
+        const message = modify.getCreator().startMessage(msgBuilder);
 
         await modify.getCreator().finish(message);
     }

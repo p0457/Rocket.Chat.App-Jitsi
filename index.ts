@@ -17,23 +17,33 @@ export class JitsiApp extends App {
         await configuration.slashCommands.provideSlashCommand(new JitsiSlashCommand(this));
 
         await configuration.settings.provideSetting({
-          id: 'name',
-          type: SettingType.STRING,
-          packageValue: 'Jitsi',
-          required: true,
-          public: false,
-          i18nLabel: 'customize_name',
-          i18nDescription: 'customize_name_description',
+            id: 'send_as_self',
+            type: SettingType.BOOLEAN,
+            packageValue: '',
+            required: false,
+            public: false,
+            i18nLabel: 'customize_send_as_self',
+            i18nDescription: 'customize_send_as_self_description',
         });
 
         await configuration.settings.provideSetting({
-          id: 'icon',
-          type: SettingType.STRING,
-          packageValue: 'https://github.com/tgardner851/Rocket.Chat.App-Jitsi/raw/master/icon.png',
-          required: true,
-          public: false,
-          i18nLabel: 'customize_icon',
-          i18nDescription: 'customize_icon_description',
+            id: 'name',
+            type: SettingType.STRING,
+            packageValue: 'Jitsi',
+            required: true,
+            public: false,
+            i18nLabel: 'customize_name',
+            i18nDescription: 'customize_name_description',
+        });
+
+        await configuration.settings.provideSetting({
+            id: 'icon',
+            type: SettingType.STRING,
+            packageValue: 'https://github.com/tgardner851/Rocket.Chat.App-Jitsi/raw/master/icon.png',
+            required: true,
+            public: false,
+            i18nLabel: 'customize_icon',
+            i18nDescription: 'customize_icon_description',
         });
 
         await configuration.settings.provideSetting({
@@ -42,8 +52,8 @@ export class JitsiApp extends App {
             packageValue: 'https://meet.jit.si/',
             required: true,
             public: false,
-            i18nLabel: 'server',
-            i18nDescription: 'server_description',
+            i18nLabel: 'customize_server',
+            i18nDescription: 'customize_server_description',
         });
 
         await configuration.settings.provideSetting({
@@ -52,8 +62,8 @@ export class JitsiApp extends App {
             packageValue: '',
             required: false,
             public: false,
-            i18nLabel: 'room_name_prepend',
-            i18nDescription: 'room_name_prepend_description',
+            i18nLabel: 'customize_room_name_prepend',
+            i18nDescription: 'customize_room_name_prepend_description',
         });
     }
 }
