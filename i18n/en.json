@@ -3,6 +3,8 @@
     "command_description": "Generate an Jitsi video meeting URL.",
     "customize_send_as_self": "Send as Self",
     "customize_send_as_self_description": "If enabled, will send as the invoker's username.",
+    "customize_sender": "Customize Sender",
+    "customize_sender_description": "Choose the user that this app will post as.",
     "customize_name": "Customize Name",
     "customize_name_description": "Choose the username that this app will post as.",
     "customize_icon": "Customize Icon",

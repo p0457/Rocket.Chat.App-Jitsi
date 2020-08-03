@@ -1,6 +1,7 @@
 import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { App } from '@rocket.chat/apps-engine/definition/App';
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands';
+import { createConfigurationModal } from './lib/createConfigurationModal';
 
 export class JitsiSlashCommand implements ISlashCommand {
     public command: string;
@@ -17,66 +18,26 @@ export class JitsiSlashCommand implements ISlashCommand {
 
     // tslint:disable-next-line:max-line-length
     public async executor(context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> {
-        const sendAsSelf = await read.getEnvironmentReader().getSettings().getValueById('send_as_self');
-        const avatarUrl = await read.getEnvironmentReader().getSettings().getValueById('icon');
-        const alias = await read.getEnvironmentReader().getSettings().getValueById('name');
-        const botSender = await read.getUserReader().getById('rocket.cat');
-        const selfSender = context.getSender();
-        const room = context.getRoom();
+      const triggerId = context.getTriggerId();
+      const user = context.getSender();
+      const uid = user.id;
+      const room = context.getRoom();
 
-        let server = await read.getEnvironmentReader().getSettings().getValueById('server');
-        if (!server.toString().endsWith('/')) {
-          server = `${server}/`;
+      let [roomName] = context.getArguments();
+
+      if (!roomName) {
+        // Direct Messages
+        if (room.type === 'd') {
+          roomName = room.id;
         }
-        const roomNamePrepend = await read.getEnvironmentReader().getSettings().getValueById('room_name_prepend');
+        else roomName = room.slugifiedName;
+      }
+      // Fallback?
+      if (!roomName) roomName = `${room.id}_${uid}`;
 
-        let [roomName] = context.getArguments();
-
-        if (roomNamePrepend) {
-          if (roomName) {
-            roomName = `${roomNamePrepend}-${roomName}`;
-          } else {
-            roomName = roomNamePrepend;
-          }
-        } else {
-          if (!roomName) {
-            roomName = context.getRoom().id + context.getSender().id;
-          }
-        }
-
-        if (roomName.trim() === '' || roomName.trim() === roomNamePrepend)  {
-          roomName = `${roomName}-${room.slugifiedName}`;
-        }
-
-        const url = `${server}${roomName}`;
-
-        let text = `@${selfSender.username} *has started a video call:* ${url}`;
-
-        if (sendAsSelf) {
-          text = `*Join my video call:* ${ url }`;
-        }
-
-        let sender = botSender;
-        if (sendAsSelf) {
-          sender = selfSender;
-        }
-
-        let msgBuilder = {
-          room,
-          sender,
-          groupable: false,
-          text,
-          avatarUrl: undefined,
-          alias: undefined
-        };
-
-        if (!sendAsSelf) {
-          msgBuilder.avatarUrl = avatarUrl;
-          msgBuilder.alias = alias;
-        }
-
-        const message = modify.getCreator().startMessage(msgBuilder);
-
-        await modify.getCreator().finish(message);
+      if (triggerId) {
+        const modal = await createConfigurationModal({ persis, read, modify, data: { user, room }, roomName });
+        await modify.getUiController().openModalView(modal, { triggerId }, context.getSender());
+      }
     }
 }
