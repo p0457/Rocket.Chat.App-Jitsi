@@ -21,19 +21,22 @@ export async function viewLink(
     throw new Error('No such message');
   }
 
-  let allowed = true;
+  let allowed = false;
   let usernamesAllowedToView: string[] = [];
-  if (jitsiRoomMessage.usernamesAllowedViewPassword) {
-    usernamesAllowedToView = jitsiRoomMessage.usernamesAllowedViewPassword.split(',');
-    if (usernamesAllowedToView.length > 0 && usernamesAllowedToView[0].trim() !== '') {
-      usernamesAllowedToView = usernamesAllowedToView.map((u) => {
-        return u.trim().toLowerCase();
-      });
-      const user = await read.getUserReader().getById(userId);
-      if (usernamesAllowedToView.includes(user.name.toLowerCase())) allowed = true;
-      else allowed = false;
+  if (jitsiRoomMessage.uid === userId) allowed = true;
+  else {
+    if (jitsiRoomMessage.usernamesAllowedViewPassword) {
+      usernamesAllowedToView = jitsiRoomMessage.usernamesAllowedViewPassword.split(',');
+      if (usernamesAllowedToView.length > 0 && usernamesAllowedToView[0].trim() !== '') {
+        usernamesAllowedToView = usernamesAllowedToView.map((u) => {
+          return u.trim().toLowerCase();
+        });
+        const user = await read.getUserReader().getById(userId);
+        if (usernamesAllowedToView.includes(user.name.toLowerCase())) allowed = true;
+        else allowed = false;
+      }
+      else allowed = true;
     }
-    else allowed = true;
   }
 
   let text = '';
