@@ -37,6 +37,7 @@ export async function dmPassword(
       }
       else allowed = true;
     }
+    else allowed = true;
   }
 
   let text = '';
