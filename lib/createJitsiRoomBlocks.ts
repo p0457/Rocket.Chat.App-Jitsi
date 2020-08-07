@@ -25,7 +25,7 @@ export async function createJitsiRoomBlocks(block: BlockBuilder, config: IJitsiR
   block.addDividerBlock();
   let passwordSectionText = 'Password';
   if (hasPassword) passwordSectionText += ' Enabled';
-  else passwordSectionText += ' Disable or Not Set';
+  else passwordSectionText += ' Disabled or Not Set';
   block.addSectionBlock({
     text: block.newPlainTextObject(passwordSectionText),
     accessory: {
@@ -40,7 +40,7 @@ export async function createJitsiRoomBlocks(block: BlockBuilder, config: IJitsiR
     },
  });
  if (hasPassword) {
-  let passwordUpdatedDate = 'Enabled';
+  let passwordUpdatedDate = 'Set on Creation';
   if (config.passwordUpdated) {
     let year = config.passwordUpdated.getFullYear();
     let month = String(config.passwordUpdated.getMonth()).trim();
